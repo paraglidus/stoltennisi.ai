@@ -4,8 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function PracticePage() {
   const { user, recordMatch } = useAuth();
-  const [difficulty, setDifficulty] = useState('medium');
-  const [scores, setScores] = useState({ left: 0, right: 0 });
+  const [difficulty, setDifficulty] = useState('easy');
+  const [scores, setScores] = useState({ near: 0, far: 0 });
   const [muted, setMuted] = useState(false);
 
   const aiPlayer = {
@@ -77,9 +77,9 @@ export default function PracticePage() {
         </div>
 
         <div className="score-display">
-          <span style={{ color: 'var(--accent-emerald)' }}>{scores.left}</span>
+          <span style={{ color: 'var(--accent-emerald)' }}>{scores.near}</span>
           <span style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>:</span>
-          <span style={{ color: 'var(--accent-amber)' }}>{scores.right}</span>
+          <span style={{ color: 'var(--accent-amber)' }}>{scores.far}</span>
         </div>
 
         <div className="player-pill">
@@ -99,8 +99,8 @@ export default function PracticePage() {
         mode="ai"
         difficulty={difficulty}
         muted={muted}
-        leftPlayer={user}
-        rightPlayer={aiPlayer}
+        nearPlayer={user}
+        farPlayer={aiPlayer}
         onScoreChange={setScores}
         onMatchEnd={({ won, myScore, opponentScore }) =>
           recordMatch({

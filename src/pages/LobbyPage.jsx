@@ -12,7 +12,7 @@ export default function LobbyPage() {
   const [showManual, setShowManual] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const [scores, setScores] = useState({ left: 0, right: 0 });
+  const [scores, setScores] = useState({ near: 0, far: 0 });
   const [muted, setMuted] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState([]);
@@ -79,18 +79,16 @@ export default function LobbyPage() {
   function handleLeaveArena() {
     disconnect();
     setMessages([]);
-    setScores({ left: 0, right: 0 });
+    setScores({ near: 0, far: 0 });
   }
 
   if (status === 'connected') {
-    const leftPlayer =
-      role === 'host'
-        ? user
-        : peerUser || { username: 'Host', avatarColor: '#10b981', elo: 1000 };
-    const rightPlayer =
-      role === 'guest'
-        ? user
-        : peerUser || { username: 'Mehmon', avatarColor: '#06b6d4', elo: 1000 };
+    const nearPlayer = user;
+    const farPlayer = peerUser || {
+      username: role === 'host' ? 'Mehmon' : 'Host',
+      avatarColor: '#06b6d4',
+      elo: 1000,
+    };
 
     return (
       <div>
@@ -98,40 +96,36 @@ export default function LobbyPage() {
           <div className="player-pill">
             <span
               className="avatar-badge"
-              style={{ background: leftPlayer.avatarColor || '#10b981' }}
+              style={{ background: nearPlayer.avatarColor || '#10b981' }}
             >
-              {leftPlayer.username?.slice(0, 2).toUpperCase()}
+              {nearPlayer.username?.slice(0, 2).toUpperCase()}
             </span>
             <div>
-              <div style={{ fontWeight: 700 }}>
-                {leftPlayer.username} {role === 'host' && '(Siz)'}
-              </div>
+              <div style={{ fontWeight: 700 }}>{nearPlayer.username} (Siz)</div>
               <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                ELO {leftPlayer.elo || 1000}
+                ELO {nearPlayer.elo || 1000}
               </div>
             </div>
           </div>
 
           <div className="score-display">
-            <span style={{ color: 'var(--accent-emerald)' }}>{scores.left}</span>
+            <span style={{ color: 'var(--accent-emerald)' }}>{scores.near}</span>
             <span style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>:</span>
-            <span style={{ color: 'var(--accent-cyan)' }}>{scores.right}</span>
+            <span style={{ color: 'var(--accent-cyan)' }}>{scores.far}</span>
           </div>
 
           <div className="player-pill">
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontWeight: 700 }}>
-                {rightPlayer.username} {role === 'guest' && '(Siz)'}
-              </div>
+              <div style={{ fontWeight: 700 }}>{farPlayer.username}</div>
               <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                ELO {rightPlayer.elo || 1000}
+                ELO {farPlayer.elo || 1000}
               </div>
             </div>
             <span
               className="avatar-badge"
-              style={{ background: rightPlayer.avatarColor || '#06b6d4' }}
+              style={{ background: farPlayer.avatarColor || '#06b6d4' }}
             >
-              {rightPlayer.username?.slice(0, 2).toUpperCase()}
+              {farPlayer.username?.slice(0, 2).toUpperCase()}
             </span>
           </div>
         </div>
@@ -142,8 +136,8 @@ export default function LobbyPage() {
               mode="webrtc"
               role={role}
               muted={muted}
-              leftPlayer={leftPlayer}
-              rightPlayer={rightPlayer}
+              nearPlayer={nearPlayer}
+              farPlayer={farPlayer}
               sendGameData={sendGameData}
               sendReliable={sendReliable}
               incomingStateRef={incomingStateRef}
