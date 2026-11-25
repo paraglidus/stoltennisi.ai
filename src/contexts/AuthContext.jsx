@@ -6,7 +6,16 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import { auth, db, isFirebaseConfigured } from '../utils/firebase';
 
 const AuthContext = createContext(null);
@@ -243,6 +252,47 @@ export function AuthProvider({ children }) {
     }
   }
 
+  async function getPlayersLeaderboard() {
+    if (isFirebaseConfigured && db) {
+      const q = query(collection(db, 'users'), orderBy('elo', 'desc'));
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => {
+        const data = d.data();
+        const wins = data.wins || 0;
+        const losses = data.losses || 0;
+        return {
+          uid: d.id,
+          username: data.username || 'O‘yinchi',
+          avatarColor: data.avatarColor || AVATAR_COLORS[0],
+          elo: data.elo || 1000,
+          wins,
+          losses,
+          totalGames: wins + losses,
+          createdAt: data.createdAt || null,
+        };
+      });
+    }
+
+    const users = readLocalUsers();
+    return Object.values(users)
+      .map((u) => {
+        const wins = u.wins || 0;
+        const losses = u.losses || 0;
+        return {
+          uid: u.uid,
+          email: u.email,
+          username: u.username,
+          avatarColor: u.avatarColor || AVATAR_COLORS[0],
+          elo: u.elo || 1000,
+          wins,
+          losses,
+          totalGames: wins + losses,
+          createdAt: u.createdAt || null,
+        };
+      })
+      .sort((a, b) => b.elo - a.elo || b.wins - a.wins);
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -253,6 +303,7 @@ export function AuthProvider({ children }) {
         login,
         logout,
         recordMatch,
+        getPlayersLeaderboard,
         avatarColors: AVATAR_COLORS,
       }}
     >

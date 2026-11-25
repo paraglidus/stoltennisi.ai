@@ -37,6 +37,12 @@ export default function Navbar() {
               AI Mashq
             </NavLink>
             <NavLink
+              to="/leaderboard"
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+            >
+              Reyting
+            </NavLink>
+            <NavLink
               to="/profile"
               className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
             >

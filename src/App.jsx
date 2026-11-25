@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthPage from './pages/AuthPage';
+import LeaderboardPage from './pages/LeaderboardPage';
 import LobbyPage from './pages/LobbyPage';
 import PracticePage from './pages/PracticePage';
 import ProfilePage from './pages/ProfilePage';
@@ -57,6 +58,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute>
                 <PracticePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/leaderboard"
+            element={
+              <ProtectedRoute>
+                <LeaderboardPage />
               </ProtectedRoute>
             }
           />
